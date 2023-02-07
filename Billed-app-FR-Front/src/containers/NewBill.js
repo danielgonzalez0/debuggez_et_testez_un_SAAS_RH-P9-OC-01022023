@@ -1,6 +1,17 @@
 import { ROUTES_PATH } from '../constants/routes.js';
 import Logout from './Logout.js';
 
+/**
+ * check the extension of the file added by user
+ * @param {string} filename name + extension of file added by user
+ * @returns true if the extension is .jpg, .jpeg, .png else return false
+ */
+export const checkFileExtension = function (filename) {
+  const extensionFile = filename.split('.', 4)[1];
+  const extensionArray = ['jpeg', 'jpg', 'png'];
+  if (extensionArray.includes(extensionFile.toLowerCase())) return true;
+  else return false;
+};
 export default class NewBill {
   constructor({ document, onNavigate, store, localStorage }) {
     this.document = document;
@@ -17,19 +28,18 @@ export default class NewBill {
     this.billId = null;
     new Logout({ document, localStorage, onNavigate });
   }
+
   handleChangeFile = (e) => {
     e.preventDefault();
     const file = this.document.querySelector(`input[data-testid="file"]`)
       .files[0];
-    const extensionFile = file.name.split('.', 4)[1];
-    const extensionArray = ['jpeg', 'jpg', 'png'];
     const filePath = e.target.value.split(/\\/g);
     const fileName = filePath[filePath.length - 1];
     const formData = new FormData();
     const email = JSON.parse(localStorage.getItem('user')).email;
     formData.append('file', file);
     formData.append('email', email);
-    if (extensionArray.includes(extensionFile.toLowerCase())) {
+    if (checkFileExtension(file.name)) {
       this.store
         .bills()
         .create({
