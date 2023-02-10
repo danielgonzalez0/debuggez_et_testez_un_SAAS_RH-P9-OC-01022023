@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen, waitFor } from '@testing-library/dom';
+import { fireEvent, screen, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import BillsUI from '../views/BillsUI.js';
 import { bills } from '../fixtures/bills.js';
@@ -50,18 +50,7 @@ describe('Given I am connected as an employee', () => {
 
 describe('Given I am connected as an employee and I am on bills page', () => {
   describe('When I click on the icon eye', () => {
-    test('A modal should open', async () => {
-      // // start connexion simulation
-      // Object.defineProperty(window, 'localStorage', {
-      //   value: localStorageMock,
-      // });
-      // window.localStorage.setItem(
-      //   'user',
-      //   JSON.stringify({
-      //     type: 'Employee',
-      //   })
-      // );
-      // // end connexion simulation
+    test('A modal should open', () => {
       //start DOM simulation
       document.body.innerHTML = BillsUI({ data: bills });
       const onNavigate = (pathname) => {
@@ -90,6 +79,46 @@ describe('Given I am connected as an employee and I am on bills page', () => {
         expect(modale).toBeTruthy();
       });
       //end eventlistener simulation
+    }); //end test
+  }); //end describe
+}); //end describe
+
+describe('Given I am connected as an employee and I am on bills page', () => {
+  describe('When I click on the new bill button', () => {
+    test('I should be sent on the page name sent a bill', () => {
+      //environment simulation
+      Object.defineProperty(window, 'localStorage', {
+        value: localStorageMock,
+      });
+      window.localStorage.setItem(
+        'user',
+        JSON.stringify({
+          type: 'Employee',
+        })
+      );
+      //start DOM simulation
+      document.body.innerHTML = BillsUI({ data: bills });
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname });
+      };
+      const store = null;
+      const bill = new Bills({
+        document,
+        onNavigate,
+        store,
+        localStorage: window.localStorage,
+      });
+
+      //element declaration
+      const newButton = screen.getByTestId('btn-new-bill');
+      const handleClickNewBill = jest.fn(bill.handleClickNewBill());
+      //event simulation
+      newButton.addEventListener('click', handleClickNewBill);
+      fireEvent.click(newButton);
+      //tests
+      expect(handleClickNewBill).toHaveBeenCalled();
+      const formNewBill = screen.getByTestId('form-new-bill');
+      expect(formNewBill).toBeTruthy();
     }); //end test
   }); //end describe
 }); //end describe
