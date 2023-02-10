@@ -83,7 +83,7 @@ describe('Given I am connected as an employee and I am on bills page', () => {
       const modale = document.getElementById('modaleFile');
       const handleClickIconEye = jest.fn(bill.handleClickIconEye);
       iconEye.forEach((icon) => {
-        icon.addEventListener('click', (e) => handleClickIconEye(icon));
+        icon.addEventListener('click', () => handleClickIconEye(icon));
         userEvent.click(icon);
         //tests
         expect(handleClickIconEye).toHaveBeenCalled();
