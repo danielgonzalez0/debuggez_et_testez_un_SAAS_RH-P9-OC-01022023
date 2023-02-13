@@ -41,11 +41,11 @@ export default class {
 
   getBills = () => {
     if (this.store) {
+      console.log(this.store);
       return this.store
         .bills()
         .list()
         .then((snapshot) => {
-          console.log(snapshot);
           const bills = snapshot.map((doc) => {
             try {
               return {

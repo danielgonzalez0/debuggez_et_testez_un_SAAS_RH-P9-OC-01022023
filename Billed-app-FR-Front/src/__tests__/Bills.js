@@ -11,6 +11,7 @@ import { localStorageMock } from '../__mocks__/localStorage.js';
 
 import router from '../app/Router.js';
 import Bills from '../containers/Bills.js';
+import mockStore from '../__mocks__/store.js';
 
 describe('Given I am connected as an employee', () => {
   describe('When I am on Bills Page', () => {
@@ -31,6 +32,7 @@ describe('Given I am connected as an employee', () => {
       window.onNavigate(ROUTES_PATH.Bills);
       await waitFor(() => screen.getByTestId('icon-window'));
       const windowIcon = screen.getByTestId('icon-window');
+
       //to-do write expect expression
       expect(windowIcon.getAttribute('class')).toContain('active-icon');
     });
@@ -60,7 +62,7 @@ describe('Given I am connected as an employee and I am on bills page', () => {
       const bill = new Bills({
         document,
         onNavigate,
-        store,
+        store: store,
         localStorage: window.localStorage,
       });
 
@@ -68,9 +70,9 @@ describe('Given I am connected as an employee and I am on bills page', () => {
       //start eventlistener simulation
       // mock bootstrap jQuery modal function
       $.fn.modal = jest.fn();
+      const handleClickIconEye = jest.fn(bill.handleClickIconEye);
       const iconEye = screen.getAllByTestId('icon-eye');
       const modale = document.getElementById('modaleFile');
-      const handleClickIconEye = jest.fn(bill.handleClickIconEye);
       iconEye.forEach((icon) => {
         icon.addEventListener('click', () => handleClickIconEye(icon));
         userEvent.click(icon);
@@ -105,7 +107,7 @@ describe('Given I am connected as an employee and I am on bills page', () => {
       const bill = new Bills({
         document,
         onNavigate,
-        store,
+        store: store,
         localStorage: window.localStorage,
       });
 
@@ -119,6 +121,97 @@ describe('Given I am connected as an employee and I am on bills page', () => {
       expect(handleClickNewBill).toHaveBeenCalled();
       const formNewBill = screen.getByTestId('form-new-bill');
       expect(formNewBill).toBeTruthy();
+    }); //end test
+  }); //end describe
+}); //end describe
+
+//GET integration test
+describe('Given I am a user connected as Employee', () => {
+  describe('When I navigate to the bills page', () => {
+    test('fetches bills from mock API GET', async () => {
+      //environment simulation
+      localStorage.setItem(
+        'user',
+        JSON.stringify({ type: 'Employee', email: 'a@a' })
+      );
+      //DOM simulation
+      const root = document.createElement('div');
+      root.setAttribute('id', 'root');
+      document.body.append(root);
+      // router simulation
+      const pathname = ROUTES_PATH['Bills'];
+      root.innerHTML = ROUTES({ pathname: pathname, loading: true });
+      const billsList = new Bills({
+        document,
+        onNavigate,
+        store: mockStore,
+        localStorage: window.localStorage,
+      });
+      billsList.getBills().then((data) => {
+        root.innerHTML = BillsUI({ data });
+      //tests
+      expect(pathname).toBe(`#employee/bills`);
+      expect(screen.getByTestId('tbody').rows.length).toBe(4);
+      expect(screen.getByTestId('btn-new-bill')).toBeTruthy();
+      expect(screen.getByText('Mes notes de frais')).toBeTruthy();
+      });
+    }); //end test
+  }); //end describe
+
+  describe('When an error occurs on API', () => {
+    beforeEach(() => {
+      //environment simulation
+      jest.spyOn(mockStore, 'bills');
+      Object.defineProperty(window, 'localStorage', {
+        value: localStorageMock,
+      });
+      window.localStorage.setItem(
+        'user',
+        JSON.stringify({
+          type: 'Employee',
+          email: 'a@a',
+        })
+      );
+      //DOM simulation
+      const root = document.createElement('div');
+      root.setAttribute('id', 'root');
+      document.body.appendChild(root);
+      // router simulation
+      router();
+    }); //end beforeEach
+    test('fetches bills from an API and fails with 404 message error', async () => {
+      //https://jestjs.io/fr/docs/mock-function-api#mockfnmockimplementationoncefn
+      //Error simulation
+      mockStore.bills.mockImplementationOnce(() => {
+        return {
+          list: () => {
+            return Promise.reject(new Error('Erreur 404'));
+          },
+        };
+      });
+      await new Promise(process.nextTick);
+      //DOM simulation
+      document.body.innerHTML = BillsUI({ error: 'Erreur 404' });
+      //test
+      const message = await screen.getByText(/Erreur 404/);
+      expect(message).toBeTruthy();
+    }); //end test
+
+    test('fetches messages from an API and fails with 500 message error', async () => {
+      //error Simulation
+      mockStore.bills.mockImplementationOnce(() => {
+        return {
+          list: () => {
+            return Promise.reject(new Error('Erreur 500'));
+          },
+        };
+      });
+      await new Promise(process.nextTick);
+      //DOM simulation
+      document.body.innerHTML = BillsUI({ error: 'Erreur 500' });
+      //test
+      const message = await screen.getByText(/Erreur 500/);
+      expect(message).toBeTruthy();
     }); //end test
   }); //end describe
 }); //end describe

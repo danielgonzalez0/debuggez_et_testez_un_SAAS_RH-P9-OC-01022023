@@ -26,6 +26,7 @@ export default () => {
         store,
       });
     } else if (pathname === ROUTES_PATH['Bills']) {
+      console.log('ok');
       rootDiv.innerHTML = ROUTES({ pathname, loading: true });
       const divIcon1 = document.getElementById('layout-icon1');
       const divIcon2 = document.getElementById('layout-icon2');
