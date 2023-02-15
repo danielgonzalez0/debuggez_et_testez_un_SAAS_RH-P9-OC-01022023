@@ -108,3 +108,55 @@ describe('Given I am connected as an employee', () => {
   }); //end describe
 }); //end describe
 
+describe('Given I am connected as an employee', () => {
+  describe('When I am on NewBill Page and I select an image in an incorrect format', () => {
+    test('Then an error message should be displayed', () => {
+      //environment simulation
+      Object.defineProperty(window, 'localStorage', {
+        value: localStorageMock,
+      });
+      window.localStorage.setItem(
+        'user',
+        JSON.stringify({
+          type: 'Employee',
+        })
+      );
+
+      //DOM simulation
+      const root = document.createElement('div');
+      root.setAttribute('id', 'root');
+      document.body.append(root);
+      Router();
+      window.onNavigate(ROUTES_PATH.NewBill);
+
+      // initialisation NewBill
+      const newBill = new NewBill({
+        document,
+        onNavigate,
+        store: mockStore,
+        localStorage: window.localStorage,
+      });
+
+      //element declaration
+      const fileInput = screen.getByTestId('file');
+      const handleChangeFile = jest.fn((e) => newBill.handleChangeFile(e));
+      fileInput.addEventListener('change', handleChangeFile);
+      //instantiate a File object
+      fireEvent.change(fileInput, {
+        target: {
+          files: [
+            new File(['image.txt'], 'image.txt', {
+              type: 'image/txt',
+            }),
+          ],
+        },
+      });
+      expect(fileInput.files[0].name).toBe('image.txt');
+      const errorInput = screen.getByTestId('errorMessage');
+      expect(errorInput.textContent).toBe(
+        'formats autorisés : .jpeg, .jpg, .png'
+      );
+      expect(handleChangeFile).toHaveBeenCalled();
+    }); //end test
+  }); //end describe
+}); //end describe

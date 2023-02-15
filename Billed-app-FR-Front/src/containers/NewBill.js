@@ -91,8 +91,8 @@ export default class NewBill {
       status: 'pending',
     };
     console.log(bill);
-    // this.updateBill(bill);
-    // this.onNavigate(ROUTES_PATH['Bills']);
+    this.updateBill(bill);
+    this.onNavigate(ROUTES_PATH['Bills']);
   };
 
   // not need to cover this function by tests
