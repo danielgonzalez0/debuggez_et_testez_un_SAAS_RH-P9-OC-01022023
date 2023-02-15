@@ -98,7 +98,7 @@ describe('Given I am connected as an employee and I am on bills page', () => {
           type: 'Employee',
         })
       );
-      //start DOM simulation
+//       //start DOM simulation
       document.body.innerHTML = BillsUI({ data: bills });
       const onNavigate = (pathname) => {
         document.body.innerHTML = ROUTES({ pathname });
@@ -111,13 +111,13 @@ describe('Given I am connected as an employee and I am on bills page', () => {
         localStorage: window.localStorage,
       });
 
-      //element declaration
+//       //element declaration
       const newButton = screen.getByTestId('btn-new-bill');
       const handleClickNewBill = jest.fn(bill.handleClickNewBill());
       //event simulation
       newButton.addEventListener('click', handleClickNewBill);
       fireEvent.click(newButton);
-      //tests
+//       //tests
       expect(handleClickNewBill).toHaveBeenCalled();
       const formNewBill = screen.getByTestId('form-new-bill');
       expect(formNewBill).toBeTruthy();
