@@ -151,6 +151,7 @@ describe('Given I am connected as an employee', () => {
           ],
         },
       });
+      //tests
       expect(fileInput.files[0].name).toBe('image.txt');
       const errorInput = screen.getByTestId('errorMessage');
       expect(errorInput.textContent).toBe(
@@ -158,5 +159,48 @@ describe('Given I am connected as an employee', () => {
       );
       expect(handleChangeFile).toHaveBeenCalled();
     }); //end test
+  }); //end describe
+}); //end describe
+
+describe('Given I am connected as an employee', () => {
+  describe('When I submit a new bill', () => {
+    test('then a bill is created', () => {
+      //environment simulation
+      Object.defineProperty(window, 'localStorage', {
+        value: localStorageMock,
+      });
+      window.localStorage.setItem(
+        'user',
+        JSON.stringify({
+          type: 'Employee',
+        })
+      );
+
+      //DOM simulation
+      const root = document.createElement('div');
+      root.setAttribute('id', 'root');
+      document.body.append(root);
+      Router();
+      window.onNavigate(ROUTES_PATH.NewBill);
+
+      // initialisation NewBill
+      const newBill = new NewBill({
+        document,
+        onNavigate,
+        store: mockStore,
+        localStorage: window.localStorage,
+      });
+      //element declaration
+      // const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
+      // const submitBtn = screen.getByTestId('submit');
+      // submitBtn.addEventListener('submit', handleSubmit);
+      // fireEvent.submit(submitBtn);
+      // expect(handleSubmit).toHaveBeenCalled();
+      const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
+      const submit = screen.getByTestId('form-new-bill');
+      submit.addEventListener('submit', handleSubmit);
+      fireEvent.submit(submit);
+      expect(handleSubmit).toHaveBeenCalled();
+    }); //test
   }); //end describe
 }); //end describe
