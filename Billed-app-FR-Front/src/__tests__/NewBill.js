@@ -9,6 +9,7 @@ import Router from '../app/Router.js';
 import { ROUTES, ROUTES_PATH } from '../constants/routes.js';
 import { localStorageMock } from '../__mocks__/localStorage.js';
 import mockStore from '../__mocks__/store.js';
+import BillsUI from '../views/BillsUI.js';
 
 //unit test
 const validExtensionName = 'document1.jpg';
@@ -204,3 +205,70 @@ describe('Given I am connected as an employee', () => {
     }); //test
   }); //end describe
 }); //end describe
+
+//POST Integration test
+describe('Given I am connected as an employee', () => {
+  describe('When I submit a new bill', () => {
+    test('fetches bills from mock API POST', async () => {
+      //mock function to track calls to mocl store
+      const postSpy = jest.spyOn(mockStore, 'bills');
+      //call POST function
+      const billIsCreated = await postSpy().update();
+      //tests
+      expect(postSpy).toHaveBeenCalledTimes(1);
+      expect(billIsCreated.id).toBe('47qAXb6fIm2zOKkLzMro');
+    }); //end Test
+
+    test('fetches bills from mock API POST and fails with 404 message error', async () => {
+      //error simulation
+      mockStore.bills.mockImplementationOnce(() => {
+        return {
+          update: () => {
+            return Promise.reject(new Error('Erreur 404'));
+          },
+        };
+      });
+      //DOM simulation
+      document.body.innerHTML = BillsUI({ error: 'Erreur 404' });
+      //test
+      const message = await screen.getByText(/Erreur 404/);
+      expect(message).toBeTruthy();
+    }); //end Test
+
+    test('fetches bills from mock API POST and fails with 500 message error', async () => {
+      //error simulation
+      mockStore.bills.mockImplementationOnce(() => {
+        return {
+          update: () => {
+            return Promise.reject(new Error('Erreur 500'));
+          },
+        };
+      });
+      //DOM simulation
+      document.body.innerHTML = BillsUI({ error: 'Erreur 500' });
+      //test
+      const message = await screen.getByText(/Erreur 500/);
+      expect(message).toBeTruthy();
+    }); //end Test
+  }); //end describe
+}); //end describe
+
+    // beforeEach(() => {
+    //   //environment simulation
+    //   Object.defineProperty(window, 'localStorage', {
+    //     value: localStorageMock,
+    //   });
+    //   window.localStorage.setItem(
+    //     'user',
+    //     JSON.stringify({
+    //       type: 'Employee',
+    //     })
+    //   );
+
+    //   //DOM simulation
+    //   const root = document.createElement('div');
+    //   root.setAttribute('id', 'root');
+    //   document.body.append(root);
+    //   Router();
+    //   window.onNavigate(ROUTES_PATH.NewBill);
+    // }); //end beforeEach
