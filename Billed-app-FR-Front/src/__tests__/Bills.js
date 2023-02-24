@@ -98,7 +98,7 @@ describe('Given I am connected as an employee and I am on bills page', () => {
           type: 'Employee',
         })
       );
-//       //start DOM simulation
+      //       //start DOM simulation
       document.body.innerHTML = BillsUI({ data: bills });
       const onNavigate = (pathname) => {
         document.body.innerHTML = ROUTES({ pathname });
@@ -111,13 +111,13 @@ describe('Given I am connected as an employee and I am on bills page', () => {
         localStorage: window.localStorage,
       });
 
- //element declaration
+      //element declaration
       const newButton = screen.getByTestId('btn-new-bill');
       const handleClickNewBill = jest.fn(bill.handleClickNewBill());
-//event simulation
+      //event simulation
       newButton.addEventListener('click', handleClickNewBill);
       fireEvent.click(newButton);
-//tests
+      //tests
       expect(handleClickNewBill).toHaveBeenCalled();
       const formNewBill = screen.getByTestId('form-new-bill');
       expect(formNewBill).toBeTruthy();
@@ -149,11 +149,11 @@ describe('Given I am a user connected as Employee', () => {
       });
       billsList.getBills().then((data) => {
         root.innerHTML = BillsUI({ data });
-      //tests
-      expect(pathname).toBe(`#employee/bills`);
-      expect(screen.getByTestId('tbody').rows.length).toBe(4);
-      expect(screen.getByTestId('btn-new-bill')).toBeTruthy();
-      expect(screen.getByText('Mes notes de frais')).toBeTruthy();
+        //tests
+        expect(pathname).toBe(`#employee/bills`);
+        expect(screen.getByTestId('tbody').rows.length).toBe(4);
+        expect(screen.getByTestId('btn-new-bill')).toBeTruthy();
+        expect(screen.getByText('Mes notes de frais')).toBeTruthy();
       });
     }); //end test
   }); //end describe
@@ -191,7 +191,7 @@ describe('Given I am a user connected as Employee', () => {
       });
       await new Promise(process.nextTick);
       //DOM simulation
-      document.body.innerHTML = BillsUI({ error: 'Erreur 404' });
+      document.body.innerHTML = BillsUI({ error: 'Erreur 404' });;
       //test
       const message = await screen.getByText(/Erreur 404/);
       expect(message).toBeTruthy();

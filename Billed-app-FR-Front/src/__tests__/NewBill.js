@@ -220,55 +220,71 @@ describe('Given I am connected as an employee', () => {
     }); //end Test
 
     test('fetches bills from mock API POST and fails with 404 message error', async () => {
-      //error simulation
-      mockStore.bills.mockImplementationOnce(() => {
-        return {
-          update: () => {
-            return Promise.reject(new Error('Erreur 404'));
-          },
-        };
-      });
       //DOM simulation
-      document.body.innerHTML = BillsUI({ error: 'Erreur 404' });
-      //test
-      const message = await screen.getByText(/Erreur 404/);
-      expect(message).toBeTruthy();
+      const root = document.createElement('div');
+      root.setAttribute('id', 'root');
+      document.body.append(root);
+      Router();
+      window.onNavigate(ROUTES_PATH.NewBill);
+
+      // initialisation NewBill 
+      const newBill = new NewBill({
+        document,
+        onNavigate,
+        store: mockStore,
+        localStorage: window.localStorage,
+      });
+
+      //error simulation
+      const mockedError = jest
+        .spyOn(mockStore, 'bills')
+        .mockImplementationOnce(() => {
+          return {
+            update: () => {
+              return Promise.reject(new Error('Erreur 404'));
+            },
+          };
+        });
+
+      await expect(mockedError().update).rejects.toThrow('Erreur 404');
+      expect(mockedError).toHaveBeenCalledTimes(2);
+      expect(newBill.billId).toBeNull();
+      expect(newBill.fileUrl).toBeNull();
+      expect(newBill.fileName).toBeNull();
     }); //end Test
 
     test('fetches bills from mock API POST and fails with 500 message error', async () => {
-      //error simulation
-      mockStore.bills.mockImplementationOnce(() => {
-        return {
-          update: () => {
-            return Promise.reject(new Error('Erreur 500'));
-          },
-        };
-      });
       //DOM simulation
-      document.body.innerHTML = BillsUI({ error: 'Erreur 500' });
-      //test
-      const message = await screen.getByText(/Erreur 500/);
-      expect(message).toBeTruthy();
+      const root = document.createElement('div');
+      root.setAttribute('id', 'root');
+      document.body.append(root);
+      Router();
+      window.onNavigate(ROUTES_PATH.NewBill);
+
+      // initialisation NewBill
+      const newBill = new NewBill({
+        document,
+        onNavigate,
+        store: mockStore,
+        localStorage: window.localStorage,
+      });
+
+      //error simulation
+      const mockedError = jest
+        .spyOn(mockStore, 'bills')
+        .mockImplementationOnce(() => {
+          return {
+            update: () => {
+              return Promise.reject(new Error('Erreur 500'));
+            },
+          };
+        });
+
+      await expect(mockedError().update).rejects.toThrow('Erreur 500');
+      expect(mockedError).toHaveBeenCalledTimes(3);
+      expect(newBill.billId).toBeNull();
+      expect(newBill.fileUrl).toBeNull();
+      expect(newBill.fileName).toBeNull();
     }); //end Test
   }); //end describe
 }); //end describe
-
-    // beforeEach(() => {
-    //   //environment simulation
-    //   Object.defineProperty(window, 'localStorage', {
-    //     value: localStorageMock,
-    //   });
-    //   window.localStorage.setItem(
-    //     'user',
-    //     JSON.stringify({
-    //       type: 'Employee',
-    //     })
-    //   );
-
-    //   //DOM simulation
-    //   const root = document.createElement('div');
-    //   root.setAttribute('id', 'root');
-    //   document.body.append(root);
-    //   Router();
-    //   window.onNavigate(ROUTES_PATH.NewBill);
-    // }); //end beforeEach
