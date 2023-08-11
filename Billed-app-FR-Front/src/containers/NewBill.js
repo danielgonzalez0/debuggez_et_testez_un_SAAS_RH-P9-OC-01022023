@@ -61,6 +61,7 @@ export default class NewBill {
         })
         .catch((error) => console.error(error));
     } else {
+      fileInput.value = null;
       const errorMessage = `formats autorisés : .jpeg, .jpg, .png`;
       errorInput.textContent = errorMessage;
     }

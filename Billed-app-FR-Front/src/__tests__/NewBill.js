@@ -192,11 +192,6 @@ describe('Given I am connected as an employee', () => {
         localStorage: window.localStorage,
       });
       //element declaration
-      // const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
-      // const submitBtn = screen.getByTestId('submit');
-      // submitBtn.addEventListener('submit', handleSubmit);
-      // fireEvent.submit(submitBtn);
-      // expect(handleSubmit).toHaveBeenCalled();
       const handleSubmit = jest.fn((e) => newBill.handleSubmit(e));
       const submit = screen.getByTestId('form-new-bill');
       submit.addEventListener('submit', handleSubmit);
@@ -220,51 +215,42 @@ describe('Given I am connected as an employee', () => {
     }); //end Test
 
     test('fetches bills from mock API POST and fails with 404 message error', async () => {
+      // const html = BillsUI({ error: 'Erreur 404' });
+      // document.body.innerHTML = html;
+      // const message = await screen.getByText(/Erreur 404/);
+      // expect(message).toBeTruthy();
+
       //DOM simulation
-      // const root = document.createElement('div');
-      // root.setAttribute('id', 'root');
-      // document.body.append(root);
-      // Router();
+      const root = document.createElement('div');
+      root.setAttribute('id', 'root');
+      document.body.append(root);
+      Router();
+      window.onNavigate(ROUTES_PATH.NewBill);
 
       // initialisation NewBill
-      // const newBill = new NewBill({
-      //   document,
-      //   onNavigate,
-      //   store: mockStore,
-      //   localStorage: window.localStorage,
-      // });
-
-      //error simulation
-      // const mockedError = jest
-      //   .spyOn(mockStore, 'bills')
-      //   .mockImplementationOnce(() => {
-      //     return {
-      //       update: () => {
-      //         return Promise.reject(new Error('Erreur 404'));
-      //       },
-      //     };
-      //   });
-
-      mockStore.bills.mockImplementationOnce(() => {
-        return {
-          list: () => {
-            return Promise.reject(new Error('Erreur 404'));
-          },
-        };
+      const newBill = new NewBill({
+        document,
+        onNavigate,
+        store: mockStore,
+        localStorage: window.localStorage,
       });
 
-      window.onNavigate(ROUTES_PATH.Bills);
+      //error simulation
+      const mockedError = jest
+        .spyOn(mockStore, 'bills')
+        .mockImplementationOnce(() => {
+          return {
+            update: () => {
+              return Promise.reject(new Error('Erreur 404'));
+            },
+          };
+        });
 
-      await new Promise(process.nextTick);
-
-      const message = await screen.getByText(/Erreur 404/);
-      expect(message).toBeTruthy();
-      // await expect(mockedError().update).rejects.toThrow('Erreur 404');
-
-      // expect(mockedError).toHaveBeenCalledTimes(2);
-      // expect(newBill.billId).toBeNull();
-      // expect(newBill.fileUrl).toBeNull();
-      // expect(newBill.fileName).toBeNull();
+      await expect(mockedError().update).rejects.toThrow('Erreur 404');
+      expect(mockedError).toHaveBeenCalledTimes(2);
+      expect(newBill.billId).toBeNull();
+      expect(newBill.fileUrl).toBeNull();
+      expect(newBill.fileName).toBeNull();
     }); //end Test
 
     test('fetches bills from mock API POST and fails with 500 message error', async () => {
@@ -295,7 +281,7 @@ describe('Given I am connected as an employee', () => {
         });
 
       await expect(mockedError().update).rejects.toThrow('Erreur 500');
-      expect(mockedError).toHaveBeenCalledTimes(2);
+      expect(mockedError).toHaveBeenCalledTimes(3);
       expect(newBill.billId).toBeNull();
       expect(newBill.fileUrl).toBeNull();
       expect(newBill.fileName).toBeNull();

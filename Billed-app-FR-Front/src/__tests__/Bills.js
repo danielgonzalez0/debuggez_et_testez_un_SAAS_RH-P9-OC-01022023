@@ -50,6 +50,7 @@ describe('Given I am connected as an employee', () => {
   });
 });
 
+//DG add
 describe('Given I am connected as an employee and I am on bills page', () => {
   describe('When I click on the icon eye', () => {
     test('A modal should open', () => {
