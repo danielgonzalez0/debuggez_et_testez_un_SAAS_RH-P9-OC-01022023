@@ -51,15 +51,6 @@ describe('Given I am connected as an employee', () => {
   }); //end describe
 }); //end describe
 
-// describe('Given I am connected as an employee', () => {
-//   describe('When I am on NewBill Page', () => {
-//     test('Then ...', () => {
-//       const html = NewBillUI();
-//       document.body.innerHTML = html;
-//       //to-do write assertion
-//     });
-//   });
-// });
 describe('Given I am connected as an employee', () => {
   describe('When I am on NewBill Page and I select an image in a correct format', () => {
     test('Then the input file should display the file name', () => {
@@ -215,10 +206,6 @@ describe('Given I am connected as an employee', () => {
     }); //end Test
 
     test('fetches bills from mock API POST and fails with 404 message error', async () => {
-      // const html = BillsUI({ error: 'Erreur 404' });
-      // document.body.innerHTML = html;
-      // const message = await screen.getByText(/Erreur 404/);
-      // expect(message).toBeTruthy();
 
       //DOM simulation
       const root = document.createElement('div');
